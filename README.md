@@ -1,4 +1,4 @@
-# unify-logging-gunicorn-uvicorn-with-loguru
+# unify-logging-for-gunicorn-uvicorn-with-loguru
 
 ```python
 
