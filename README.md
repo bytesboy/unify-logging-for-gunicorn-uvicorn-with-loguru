@@ -24,3 +24,10 @@ if __name__ == '__main__':
     UnifyHandler().setup()
     server.run()
 ```
+
+```python
+# gunicorn.conf.py
+from ulogcorn.logger import gunicorn_on_starting
+
+on_staring = gunicorn_on_starting
+```
