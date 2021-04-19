@@ -1,5 +1,6 @@
 import logging
 import sys
+from typing import Any, Callable
 
 from loguru import logger
 
@@ -47,3 +48,6 @@ class UnifyHandler:
                 logging.getLogger(name).handlers = [self.handler]
 
         logger.configure(handlers=[{"sink": sys.stdout}])
+
+
+gunicorn_on_starting: Callable[[Any], None] = lambda server: UnifyHandler().setup()
