@@ -22,17 +22,13 @@ class InterceptHandler(logging.Handler):
 
 
 class StubbedGunicornLogger(Logger):
-
-    def __init__(self, cfg):
-        super().__init__(cfg)
-        self.error_logger = logging.getLogger("gunicorn.error")
-        self.access_logger = logging.getLogger("gunicorn.access")
-
     def setup(self, cfg):
         handler = logging.NullHandler()
+        self.error_logger = logging.getLogger("gunicorn.error")  # noqa
         self.error_logger.addHandler(handler)
-        self.access_logger.addHandler(handler)
         self.error_logger.setLevel(self.loglevel)
+        self.access_logger = logging.getLogger("gunicorn.access")  # noqa
+        self.access_logger.addHandler(handler)
         self.access_logger.setLevel(self.loglevel)
 
 
