@@ -1,5 +1,5 @@
-from ulogcorn.logger import UnifyHandler, StubbedGunicornLogger, StandaloneApplication
+from ulogcorn.logger import UnifyHandler, StubbedGunicornLogger, StandaloneApplication, UvicornHandler
 
-__version__ = '0.3.3'
+__version__ = '0.4.0'
 
-__all__ = ["StubbedGunicornLogger", "UnifyHandler", "StandaloneApplication", "__version__"]
+__all__ = ["StubbedGunicornLogger", "UnifyHandler", "StandaloneApplication", "UvicornHandler", "__version__"]

@@ -1,5 +1,6 @@
 import logging
 import sys
+from abc import ABC, abstractmethod
 
 from gunicorn.app.base import BaseApplication
 from gunicorn.glogging import Logger
@@ -54,9 +55,22 @@ class StandaloneApplication(BaseApplication):
         return self.application
 
 
-class UnifyHandler:
+class BaseHandler(ABC):
+
+    def __init__(self, level=logging.DEBUG) -> None:
+        super().__init__()
+        self.level = level
+        self.handler = InterceptHandler()
+
+    @abstractmethod
+    def setup(self):
+        raise NotImplementedError
+
+
+class UnifyHandler(BaseHandler):
 
     def __init__(self, level=logging.DEBUG, modules=None) -> None:
+        super().__init__(level)
         if modules is None:
             modules = [
                 *logging.root.manager.loggerDict.keys(),  # noqa
@@ -69,9 +83,7 @@ class UnifyHandler:
                 "uvicorn.error",
                 "uvicorn.asgi"
             ]
-        self.level = level
         self.modules = modules
-        self.handler = InterceptHandler()
 
     def setup(self):
         logging.root.setLevel(self.level)
@@ -80,5 +92,21 @@ class UnifyHandler:
             if name not in seen:
                 seen.add(name.split(".")[0])
                 logging.getLogger(name).handlers = [self.handler]
+
+        logger.configure(handlers=[{"sink": sys.stdout}])
+
+
+class UvicornHandler(BaseHandler):
+
+    def __init__(self, level=logging.DEBUG) -> None:
+        super().__init__(level)
+
+    def setup(self):
+        logging.root.handlers = [self.handler]
+        logging.root.setLevel(self.level)
+
+        for name in logging.root.manager.loggerDict.keys():  # noqa
+            logging.getLogger(name).handlers = []
+            logging.getLogger(name).propagate = True
 
         logger.configure(handlers=[{"sink": sys.stdout}])
