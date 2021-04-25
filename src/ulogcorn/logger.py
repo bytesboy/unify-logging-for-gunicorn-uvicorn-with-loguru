@@ -2,8 +2,8 @@ import logging
 import sys
 
 from gunicorn.app.base import BaseApplication
-from loguru import logger
 from gunicorn.glogging import Logger
+from loguru import logger
 
 
 class InterceptHandler(logging.Handler):

@@ -24,3 +24,28 @@ if __name__ == '__main__':
     UnifyHandler().setup()
     server.run()
 ```
+
+```python
+
+# gunicorn.conf.py
+
+import os
+from loguru import logger
+from ulogcorn import UnifyHandler
+
+logger_class = os.getenv("LOGGER_CLASS", "ulogcorn.logger.StubbedGunicornLogger")
+
+
+def setup():
+    UnifyHandler().setup()
+    logger.add("all.log", rotation="00:00", retention="10 days", encoding="utf-8", enqueue=True, compression="zip")
+
+
+setup()
+
+```
+```shell
+
+gunicorn -c "$GUNICORN_CONF" "$APP_MODULE"
+
+```
