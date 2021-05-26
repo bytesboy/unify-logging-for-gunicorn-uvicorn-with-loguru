@@ -2,11 +2,50 @@
 
 ```python
 
+import sys
+
 import uvicorn
-from fastapi import FastAPI
 from loguru import logger
-from uvicorn import Config
-from ulogcorn import UnifyHandler
+from ulogcorn import UvicornHandler
+from uvicorn import Server
+from uvicorn.supervisors import ChangeReload, Multiprocess
+
+
+# server.py
+
+class Configure(uvicorn.Config):
+    def configure_logging(self):
+        super().configure_logging()
+        UvicornHandler().setup()
+
+
+def run(app, **kwargs):
+    config = Configure(app, **kwargs)
+    server = Server(config=config)
+
+    if (config.reload or config.workers > 1) and not isinstance(config.app, str):
+        logger.warning(
+            "You must pass the application as an import string to enable 'reload' or  'workers'."
+        )
+        sys.exit(1)
+
+    if config.should_reload:
+        sock = config.bind_socket()
+        supervisor = ChangeReload(config, target=server.run, sockets=[sock])
+        supervisor.run()
+    elif config.workers > 1:
+        sock = config.bind_socket()
+        supervisor = Multiprocess(config, target=server.run, sockets=[sock])
+        supervisor.run()
+    else:
+        server.run()
+
+
+```
+
+```python
+from fastapi import FastAPI, Request
+import server
 
 app = FastAPI()
 
@@ -18,11 +57,7 @@ async def monitor():
 
 
 if __name__ == '__main__':
-    server = uvicorn.Server(
-        config=Config(app="main:app", host='0.0.0.0', port=8080, reload=True, debug=True)
-    )
-    UnifyHandler().setup()
-    server.run()
+    server.run(app='main:app', host='0.0.0.0', port=8000, debug=True, reload=True)
 ```
 
 ```python
@@ -44,6 +79,7 @@ def setup():
 setup()
 
 ```
+
 ```shell
 
 gunicorn -c "$GUNICORN_CONF" "$APP_MODULE"
