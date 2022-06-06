@@ -7,11 +7,11 @@ authors = ["欧德天.尼维森莫.纳墨迪奥 <icocoabeans@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 loguru = "^0.5.3"
+uvicorn = {extras = ["standard"], version = "^0.13.4"}
+gunicorn = "^20.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
-uvicorn = {extras = ["standard"], version = "^0.13.4"}
-gunicorn = "^20.1.0"
 fastapi = "^0.63.0"
 
 [build-system]
