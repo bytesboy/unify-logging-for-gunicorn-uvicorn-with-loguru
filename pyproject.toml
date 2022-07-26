@@ -2,7 +2,7 @@
 name = "ulogcorn"
 version = "0.4.3"
 description = "Unify logging for a gunicorn and uvicorn application with loguru"
-authors = ["尼维森莫.纳墨迪奥 <icocoabeans@gmail.com>"]
+authors = ["Joy <icocoabeans@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
